@@ -1,5 +1,5 @@
 function main() {
-    //setup elms
+    //setup elms lil edit lmao
     const drawBtn = document.querySelector("#draw");
     const holdBtn = document.querySelector("#hold");
     const splitBtn = document.querySelector("#split");
