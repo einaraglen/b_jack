@@ -1,0 +1,294 @@
+/*
+    function drawEvent(){
+        if(hasBet) {
+            if(start) {
+                start = false;
+                disableBetting();
+                drawBtn.innerHTML = "draw";
+                for(let i=0;i<3;i++) {
+                    if(i<2) {
+                        game.drawUser(doSplit);
+                    } else {
+                        game.drawComp();
+                    }
+                }
+                allowHold();
+                if(game.isSplittable()) {
+                    allowSpit();
+                }
+                if(!aceHandled && game.hasAce()) {
+                    restrictHold();
+                    restrictHold();
+                    restrictDraw();
+                    max.innerHTML = "max (" + (game.getTotal("user") + 10) + ")";
+                    min.innerHTML = "min (" + game.getTotal("user") + ")";
+                    max.style = "display: inline-block";
+                    min.style = "display: inline-block";
+                }
+            } else {
+                allowHold();
+                game.drawUser(doSplit);
+            }
+        } else {
+            if(aceHandled || !game.hasAce()) {
+                reset();
+            } 
+        }
+
+        if(userBest()) {
+            aceHandled = true;
+            holdEvent();
+            restrictHold();
+        }
+        if(userIsAbove()) {
+            aceHandled = true;
+            restrictHold();
+            end();
+        }
+        displayAllCards();
+        updateScore();
+    }
+    function incrementBet(increment, ) {
+        if(allowBet) {
+            if((parseInt(score) - (bet + increment)) < 0) {
+                console.log("too much");
+            } else {
+                hasBet = true;
+                bet = bet + increment;
+                amountTxt.innerHTML = bet;
+            }
+        }
+    }
+
+    function handleAce(action) {
+        if(action === "max") {game.setAceToMax();}
+        allowDraw();
+        allowHold();
+
+        max.style = "display: none";
+        min.style = "display: none";
+        aceHandled = true;
+
+        updateScore();
+        if(userBest() || userIsAbove()) {
+            holdEvent();
+            restrictHold();
+            end();
+        }
+    }
+
+    function userIsAbove() {
+        return (game.getTotal("user") > 21) || (game.getTotal("split") > 21);
+    }
+
+    function userBest() {
+        return (game.getTotal("user") == 21) || (game.getTotal("split") == 21)
+    }
+
+    function updateScore() {
+        if(!doSplit) {
+            userScore.innerHTML = game.getTotal("user");
+        } else {
+            userScore.innerHTML = game.getTotal("user") + " | " + game.getTotal("split");
+        }
+        compScore.innerHTML = game.getTotal("comp");
+    }
+
+    function split() {
+        if(!splitPressed && allowSplitPress) {
+            doSplit = true;
+            game.drawUser(doSplit);
+            displayAllCards();
+            updateScore();
+            restrictSplit();
+        }   
+    }
+
+    function holdEvent() {
+        if(allowHoldPress) {
+            while(game.getTotal("comp") <= 16) {
+                game.drawComp(); 
+                displayCards(game.comp, compCardField);
+                updateScore();
+            }
+            end();
+            restrictHold();
+            aceHandled = true;
+        }
+    }
+
+    function end() {
+        handleOutcome(getOutcome());
+        drawBtn.innerHTML = "next";
+        hasBet = false;
+    }
+
+    function getOutcome() {
+        let user = game.getTotal("user");
+        let split = game.getTotal("split");
+        let comp = game.getTotal("comp");
+        console.log(outcome(user, split, comp));
+        return outcome(user, split, comp);
+    }
+
+    function reset() {
+        let flashed = false;
+        /*if(!start) {
+            let loop = setInterval(flashScore, 200);
+            function flashScore() {
+                if(flashed) {
+                    scoreTxt.style.color = "#fff";
+                    clearInterval(loop);
+                } else {
+                    if(winner === "comp") {
+                        scoreTxt.style.color = "red";   
+                    } else {
+                        scoreTxt.style.color = "green";
+                    }
+                    flashed = true;
+                }
+            }
+        }
+/*
+        start = true;
+        doSplit = false;
+        hasBet = false;
+        aceHandled = false;
+        bet = 0;
+
+        amountTxt.innerHTML = 0;
+        drawBtn.innerHTML = "start";
+
+        restrictSplit();
+        restrictHold();
+        enableBetting();
+        setScore(score);
+        incrementBet(25);
+
+        game.clear();
+    }
+
+    function handleOutcome(result) {
+        if(result === "user") {
+            score = score + bet;
+        } else if(result === "comp") {
+            score = score - bet;
+        } else {
+            console.log("issa draw");
+        }
+    }
+
+    function disableBetting() {
+        allowBet = false;
+        betTop.style = "opacity: .3";
+        betMid.style = "opacity: .3";
+        betBot.style = "opacity: .3";
+    }
+
+    function enableBetting() {
+        allowBet = true;
+        betTop.style = "opacity: 1";
+        betMid.style = "opacity: 1";
+        betBot.style = "opacity: 1";
+    }
+
+    function displayAllCards() {
+        displayCards(game.user, userCardField);
+        displayCards(game.split, splitCardField);
+        displayCards(game.comp, compCardField);
+    }
+
+    function displayCards(arr, elm) {
+        elm.innerHTML = "";
+        arr.forEach(e => {
+            let card = stack[e];
+            let img = document.createElement("img");
+            img.setAttribute("src", "resources/" + card.number + "_of_" +  faces[card.face] + ".png");
+            img.setAttribute("class", "cards");
+            elm.appendChild(img);
+        });
+    }
+
+    function setBacksideCard() {
+            let img = document.createElement("img");
+            img.setAttribute("src", "resources/backside.png");
+            img.setAttribute("class", "cards");
+            compCardField.appendChild(img);
+    }
+
+    function outcome(userTotal, splitTotal, compTotal) {
+        let best = null;
+        if(userTotal > splitTotal || splitTotal > 21) {
+            best = userTotal;
+        } else {
+            best = splitTotal;
+        }
+
+        let winner = null;
+
+        if(best == compTotal) {
+            winner = "draw";
+        }
+        if(best > compTotal) {
+            winner = "user";
+        }
+        if(compTotal > 21) {
+            winner = "user";
+        } 
+        if(compTotal > best) {
+            winner = "comp";
+        }
+        if(best > 21) {
+            winner = "comp";
+        }
+        if(compTotal > 21) {
+            winner = "user";
+        }
+        return winner;
+    }
+
+    function setScore(newScore) {
+        localStorage.setItem("score", newScore);
+        score = newScore;
+        scoreTxt.innerHTML = score;
+    }
+
+    function restrictDraw() {
+        hasBet = false;
+        drawBtn.style = "opacity: .3";
+    }
+
+    function allowDraw() {
+        hasBet = true;
+        drawBtn.style = "opacity: 1";
+    }
+
+    function restrictHold() {
+        allowHoldPress = false;
+        holdBtn.style = "opacity: .3";
+    }
+
+    function allowHold() {
+        allowHoldPress = true;
+        holdBtn.style = "opacity: 1";
+    }
+
+    function restrictSplit() {
+        allowSplitPress = false;
+        splitBtn.style = "opacity: .3";
+    }
+
+    function allowSpit() {
+        allowSplitPress = true;
+        splitBtn.style = "opacity: 1";
+    }
+
+    function getCards() {  
+        let stack = new Array();
+        for(var i=0; i<4; i++) {
+            for(var j=1; j<14; j++) {
+                stack.push(new Card(i, j));
+            }
+        }
+        return stack;
+    }*/

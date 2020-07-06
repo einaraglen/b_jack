@@ -1,0 +1,70 @@
+<!DOCTYPE html> 
+<html>
+    <head>
+        <title>b_jack</title>
+        <script defer type="text/javascript" src="model/main.js"></script>
+        <script defer type="text/javascript" src="model/card.js"></script>
+        <script defer type="text/javascript" src="model/cardfactory.js"></script>
+        <script defer type="text/javascript" src="model/game.js"></script>
+        <script defer type="text/javascript" src="model/cardController.js"></script>
+        <script defer type="text/javascript" src="model/betController.js"></script>
+        <script defer type="text/javascript" src="model/logger.js"></script>
+        <script defer type="text/javascript" src="model/devtool.js"></script>
+        <link href="https://fonts.googleapis.com/css2?family=MuseoModerno:wght@600&display=swap" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body onload="main()">
+        <div id="devtool">
+            <div id="lines"></div>
+            <input type="text" id="field">
+        </div>
+        <div id="main">
+            <div id="gameview">
+                <div class="cardview" id="left">
+                    <div id="userCards"></div>
+                    <div id="splitCards"></div>
+                    <div id="maxButtons">
+                        <button id="max" class="ace">max</button>
+                        <button id="min" class="ace">min</button>
+                    </div>
+                </div>
+                <div id="middle">
+                    <div id="score">
+                        <p class="info">score</p>
+                        <p id="scoreTxt">0</p>
+                    </div>
+                    <div id="betinfo">
+                        <p class="info">bet</p>
+                        <p id="amount">0</p></div>
+                    <div id="betting">
+                        <button id="betTop" class="betButtons">+25</button>
+                        <button id="betMid" class="betButtons">+50</button>
+                        <button id="betBot" class="betButtons">+100</button>
+                    </div>
+                </div>
+                <div class="cardview" id="right">
+                    <div id="compCards"></div>
+                </div>
+            </div>
+            <div id="bottom">
+                <div id="bottomLeft">
+                    <div id="statsUser"></div>
+                    <div id="userTotal">
+                        <p class="scoreTxt" id="userScore">0</p>
+                    </div>
+                </div>
+                <div id="holster">
+                    <button class="button" id="draw">start</button>
+                    <button class="button" id="hold">hold</button>
+                    <button class="button" id="split">split</button>
+                </div> 
+                <div id="bottomRight">
+                    <div id="statsComp"></div>
+                    <div id="compTotal">
+                        <p class="scoreTxt" id="compScore">0</p>
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </body>
+</html>
